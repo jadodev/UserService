@@ -23,8 +23,8 @@ export class UserBuilder {
     return this;
   }
 
-  setPhone(phone: Phone): this {
-    this.phone = phone;
+  setPhone(phone: string): this {
+    this.phone = new Phone(phone);
     return this;
   }
 
@@ -46,16 +46,12 @@ export class UserBuilder {
       if (!this.state) {
         throw new Error('El conductor debe tener un estado');
       }
-
       return new Driver(this.id, this.name, this.state, this.phone!);
-
     } else if (this.role === UserRole.CUSTOMER) {
-      
-        return new Customer(this.id, this.name, this.phone!);
-    
+      return new Customer(this.id, this.name, this.phone!);
     } else {
-    
-        throw new Error('Rol de usuario no soportado');
+      throw new Error('Rol de usuario no soportado');
     }
   }
 }
+
