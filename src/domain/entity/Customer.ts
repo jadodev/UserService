@@ -4,7 +4,7 @@ import { Phone } from '../valueObjects/Phone';
 
 export class Customer extends User {
 
-  constructor(id: string, name: string, phone?: Phone) {
-    super(id, name, UserRole.CUSTOMER, phone!);
+  constructor(id: string, identification:number, name: string, phone?: Phone) {
+    super(id, identification, name, UserRole.CUSTOMER, phone!);
   }
 }

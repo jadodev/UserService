@@ -3,15 +3,22 @@ import { Customer } from "../entity/Customer";
 import { UserRole } from "../enum/UserRole";
 import { User } from "../entity/User";
 import { Phone } from "../valueObjects/Phone";
+import { InvalidUserRoleException } from "../../exceptions/InvalidRoleError";
 
 export class UserBuilder {
   private id: string = '';
+  private identification: number;
   private name: string = '';
   private role: UserRole = UserRole.CUSTOMER;
   private phone?: Phone;
 
   setId(id: string): this {
     this.id = id;
+    return this;
+  }
+
+  setIdentification( identification: number):this{
+    this.identification = identification;
     return this;
   }
 
@@ -26,16 +33,18 @@ export class UserBuilder {
   }
 
   setRole(role: UserRole): this {
+    if (role !== UserRole.CUSTOMER && role !== UserRole.DRIVER) {
+      throw new InvalidUserRoleException(role);
+    }
     this.role = role;
     return this;
   }
 
-
   build(): User {
     if (this.role === UserRole.DRIVER) {
-      return new Driver(this.id, this.name, this.phone!);
+      return new Driver(this.id, this.identification, this.name, this.phone!);
     } else if (this.role === UserRole.CUSTOMER) {
-      return new Customer(this.id, this.name, this.phone!);
+      return new Customer(this.id, this.identification, this.name, this.phone!);
     } else {
       throw new Error('Rol de usuario no soportado');
     }
