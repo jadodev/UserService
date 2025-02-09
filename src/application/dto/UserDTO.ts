@@ -15,9 +15,9 @@ export class UserDTO {
 
     @IsString()
     @MaxLength(50, { message: "Name cannot exceed 50 characters" })
-    phone: string | undefined;
+    phone?: string | undefined;
   
-    constructor( identification: number, name: string, role: UserRole, phone: string | undefined) {
+    constructor( identification: number, name: string, role: UserRole, phone?: string | undefined) {
       this.identification = identification;
       this.name = name;
       this.role = role;

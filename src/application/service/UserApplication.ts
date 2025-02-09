@@ -28,17 +28,16 @@ export class UserApplicationService {
         if (!userDTO.role) {
             throw new ValidationError("User role is required.");
         }
-
-        const existingUserById = await this.userService.getByIdentification(userDTO.identification);
-        if (existingUserById) {
-            throw new ValidationError(`User with ID ${userDTO.identification} already exists.`);
-        }
-
+    
         try {
             const userEntity = UserMapper.toEntity(userDTO);
             const createdUser = await this.userService.create(userEntity);
             return UserMapper.toUserDTO(createdUser);
+
         } catch (error) {
+            if (error instanceof ValidationError) {
+                throw error;
+            }
             throw new DatabaseException("Error saving user.");
         }
     }
@@ -55,7 +54,10 @@ export class UserApplicationService {
             }
             return UserMapper.toUserDTO(user);
         } catch (error) {
-            throw new DatabaseException(`Error retrieving user with ID ${id}.`);
+            if (error instanceof NotFoundError) {
+                throw error; 
+            }   
+            throw new DatabaseException(`Error retrieving user with ID ${id}.`); 
         }
     }
 

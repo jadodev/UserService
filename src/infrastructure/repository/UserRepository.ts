@@ -15,48 +15,49 @@ export class UserRepository implements UserInterfacePortOut {
     const connection: PoolConnection = await Database.getConnection();
     
     const userData = {
-      identification: user.getIdentification(),
-      name: user.getName(),
-      role: user.getRole(),
-      phone: user.getPhone() || null
+        identification: user.getIdentification(),
+        name: user.getName(),
+        role: user.getRole(),
+        phone: user.getPhone() || null,
     };
 
     if (![UserRole.CUSTOMER, UserRole.DRIVER].includes(userData.role)) {
-      throw new InvalidUserRoleException(`Invalid role: ${userData.role}`);
+        throw new InvalidUserRoleException(`Invalid role: ${userData.role}`);
     }
 
     const tableName = user.getRole() === UserRole.CUSTOMER ? "customers" : "drivers";
 
     try {
-      await connection.execute(
-        `INSERT INTO ${tableName} (identification, name, phone) 
-         VALUES (?, ?, ?)
-         ON DUPLICATE KEY UPDATE
-         name = VALUES(name), 
-         phone = VALUES(phone)`,
-        [userData.identification, userData.name, userData.phone]
-      );
-
-      if (!user.getId()) {
-        const [rows]: any[] = await connection.execute("SELECT LAST_INSERT_ID() AS id");
-        user = new User(
-          rows[0].id,
-          user.getIdentification(), 
-          user.getName(), 
-          user.getRole(), 
-          user.getPhone() ? new Phone(user.getPhone()) : undefined
+        await connection.execute(
+            `INSERT INTO ${tableName} (identification, name, phone) 
+             VALUES (?, ?, ?)
+             ON DUPLICATE KEY UPDATE
+             name = VALUES(name), 
+             phone = VALUES(phone)`,
+            [userData.identification, userData.name, userData.phone]
         );
-      }
+
+        if (!user.getId()) {
+            const [rows]: any[] = await connection.execute("SELECT LAST_INSERT_ID() AS id");
+            const newId = rows[0].id.toString();
+            user = new User(
+                newId,
+                user.getIdentification(),
+                user.getName(),
+                user.getRole(),
+                user.getPhone() ? new Phone(user.getPhone()) : undefined
+            );
+        }
 
     } catch (err) {
-      console.error("Error saving user:", err);
-      throw new Error('Error saving user');
+        console.error("Error saving user:", err);
+        throw new DatabaseException("Error saving user");
     } finally {
-      connection.release();
+        connection.release();
     }
 
     return user;
-  }
+}
 
   async getById(id: string): Promise<User | null> {
     const connection: PoolConnection = await Database.getConnection();
@@ -89,8 +90,7 @@ export class UserRepository implements UserInterfacePortOut {
       user = builder.build();
       
     } catch (err) {
-      console.error("Error retrieving user:", err);
-      throw new Error('Error retrieving user');
+      throw new NotFoundError('Error retrieving user');
     } finally {
       connection.release();
     }

@@ -14,8 +14,12 @@ export class UserMapper {
     }
 
     public static toEntity(userDTO: UserDTO): User {
-        const phone = userDTO.phone ? new Phone(userDTO.phone) : new Phone('');
+        const phone = userDTO.phone ? new Phone(userDTO.phone) : undefined;
         const role = userDTO.role as UserRole;
+
+        if (role !== UserRole.CUSTOMER && role !== UserRole.DRIVER) {
+          throw new Error('Rol de usuario no soportado');
+      }
       
         return new User(
           userDTO.id,

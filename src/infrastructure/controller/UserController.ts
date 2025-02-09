@@ -10,7 +10,8 @@ export class UserController {
         this.inicializeRoutes();
     }
 
-    private async create(req:Request, res: Response){
+    async create(req:Request, res: Response){
+        
         try {
             const user = await this.userservice.execute(req.body);
             res.status(201).json(user);
