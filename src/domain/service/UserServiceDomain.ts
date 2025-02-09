@@ -5,11 +5,9 @@ import { UserInterfacePortOut } from "../port/out/UserInterfacePortOut";
 
 export class UserServiceDomain implements UserInterfacePortIn{
     private readonly userRepository: UserInterfacePortOut;
-    private readonly builder: UserBuilder;
     
     constructor(userRepository: UserInterfacePortOut){
         this.userRepository = userRepository;
-        this.builder = new UserBuilder();
     };
 
     async create( user: User ): Promise<User> {

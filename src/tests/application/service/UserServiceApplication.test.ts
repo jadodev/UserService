@@ -1,7 +1,7 @@
 import { UserInterfacePortOut } from '../../../domain/port/out/UserInterfacePortOut';
-import { UserDTO } from '../../../applicatio/dto/UserDTO';
-import { UserMapper } from '../../../applicatio/mapper/UserMapper'; 
-import { UserServiceApplication } from '../../../applicatio/service/UserServiceApplication';
+import { UserDTO } from '../../../application/dto/UserDTO';
+import { UserMapper } from '../../../application/mapper/UserMapper'; 
+import { UserApplicationService } from '../../../application/service/UserApplication';
 import { UserInterfacePortIn } from '../../../domain/port/in/UserInterfacePortIn';
 import { UserRole } from '../../../domain/enum/UserRole';
 
@@ -16,10 +16,10 @@ const mockUserPortOut: jest.Mocked<UserInterfacePortOut> = {
 };
 
 describe('UserServiceApplication', () => {
-  let userService: UserServiceApplication;
+  let userService: UserApplicationService;
 
   beforeEach(() => {
-    userService = new UserServiceApplication(mockUserPortIn, mockUserPortOut);
+    userService = new UserApplicationService(mockUserPortIn, mockUserPortOut);
   });
 
   describe('execute', () => {
