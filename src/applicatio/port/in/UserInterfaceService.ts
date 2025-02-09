@@ -5,5 +5,5 @@ export interface CreateUserUseCase {
 }
 
 export interface GetUserById{
-    execute(id: string): Promise<UserDTO>
+    findById(id: string): Promise<UserDTO>
 }
